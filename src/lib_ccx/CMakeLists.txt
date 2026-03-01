@@ -10,11 +10,20 @@ if(WIN32)
     add_definitions(-DWIN32)
 endif(WIN32)
 
-find_package(PkgConfig)
-pkg_check_modules (GPAC REQUIRED gpac)
 
-set (EXTRA_INCLUDES ${EXTRA_INCLUDES} ${GPAC_INCLUDE_DIRS})
-set (EXTRA_LIBS ${EXTRA_LIBS} ${GPAC_LIBRARIES})
+option(WITH_HARDSUBX "Enable hard subtitle extraction (requires GPAC)" OFF)
+
+if (WITH_HARDSUBX)
+    if (WIN32)
+        message(FATAL_ERROR "WITH_HARDSUBX requires GPAC and pkg-config, which are not supported on Windows")
+    endif()
+
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(GPAC REQUIRED gpac)
+
+    set (EXTRA_INCLUDES ${EXTRA_INCLUDES} ${GPAC_INCLUDE_DIRS})
+    set (EXTRA_LIBS ${EXTRA_LIBS} ${GPAC_LIBRARIES})
+endif()
 
 if (WITH_FFMPEG)
     find_package(PkgConfig)
